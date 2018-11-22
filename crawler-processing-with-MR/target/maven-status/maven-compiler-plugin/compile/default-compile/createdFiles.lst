@@ -1,0 +1,8 @@
+SiteCount.class
+WarcFileRecordReader.class
+WritableWarcRecord.class
+SiteCount$MyReduce.class
+WarcRecord.class
+WarcRecord$WarcHeader.class
+WarcFileInputFormat.class
+SiteCount$MyMap.class
