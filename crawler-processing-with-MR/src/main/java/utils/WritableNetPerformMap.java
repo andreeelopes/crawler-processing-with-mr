@@ -7,17 +7,17 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class WritableNBT implements Writable {
+public class WritableNetPerformMap implements Writable {
 
     private LongWritable numberOfBytes;
     private LongWritable extractionTime;
 
-    public WritableNBT() {
+    public WritableNetPerformMap() {
         numberOfBytes = new LongWritable(0);
         extractionTime = new LongWritable();
     }
 
-    public WritableNBT(LongWritable numberOfBytes, LongWritable extractionTime) {
+    public WritableNetPerformMap(LongWritable numberOfBytes, LongWritable extractionTime) {
         this.numberOfBytes = numberOfBytes;
         this.extractionTime = extractionTime;
     }

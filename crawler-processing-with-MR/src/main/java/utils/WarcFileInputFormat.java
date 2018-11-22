@@ -55,7 +55,7 @@ public class WarcFileInputFormat extends FileInputFormat<LongWritable, WritableW
 @Override
 public RecordReader<LongWritable, WritableWarcRecord> createRecordReader(
 		InputSplit split, TaskAttemptContext context) throws IOException,
-		InterruptedException {	
+		InterruptedException {
 	return new WarcFileRecordReader();
 }
 

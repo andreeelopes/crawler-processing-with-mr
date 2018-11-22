@@ -16,9 +16,9 @@ import java.net.URL;
 
 public class NetworkPerformance {
 
-    public static class MyMap extends Mapper<LongWritable, WritableWarcRecord, Text, WritableNBT> {
+    public static class MyMap extends Mapper<LongWritable, WritableWarcRecord, Text, WritableNetPerformMap> {
         private Text site = new Text();
-        private WritableNBT mapValue = new WritableNBT();
+        private WritableNetPerformMap mapValue = new WritableNetPerformMap();
 
         protected void setup(Context cont) {
             System.err.println(">>>Processing>>> " + ((FileSplit) cont.getInputSplit()).getPath().toString());
@@ -51,16 +51,16 @@ public class NetworkPerformance {
     }
 
 
-    public static class MyReduce extends Reducer<Text, WritableNBT, Text, WritableNBTReduce> {
+    public static class MyReduce extends Reducer<Text, WritableNetPerformMap, Text, WritableNetPerformReduce> {
 
-        private WritableNBTReduce result = new WritableNBTReduce();
+        private WritableNetPerformReduce result = new WritableNetPerformReduce();
 
-        public void reduce(Text key, Iterable<WritableNBT> values, Context cont)
+        public void reduce(Text key, Iterable<WritableNetPerformMap> values, Context cont)
                 throws IOException, InterruptedException {
 
             long sumNB = 0;
             long sumT = 0;
-            for (WritableNBT val : values) {
+            for (WritableNetPerformMap val : values) {
                 sumNB += val.getNumberOfBytes().get();
                 sumT += val.getExtractionTime().get();
             }
@@ -83,14 +83,14 @@ public class NetworkPerformance {
         conf.setJarByClass(NetworkPerformance.class);
 
         conf.setOutputKeyClass(Text.class);
-        conf.setOutputValueClass(WritableNBTReduce.class);
+        conf.setOutputValueClass(WritableNetPerformReduce.class);
 
         conf.setMapperClass(MyMap.class);
         conf.setCombinerClass(MyReduce.class);
         conf.setReducerClass(MyReduce.class);
 
         conf.setInputFormatClass(WarcFileInputFormat.class);
-        conf.setOutputFormatClass(TextOutputFormat.class);
+        conf.setOutputFormatClass(WritableNetPerformMap.class); // TODO
 
         FileInputFormat.setInputPaths(conf, new Path(args[0]));
         FileOutputFormat.setOutputPath(conf, new Path(args[1]));
