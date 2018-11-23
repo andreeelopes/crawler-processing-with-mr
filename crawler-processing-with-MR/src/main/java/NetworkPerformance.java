@@ -16,9 +16,8 @@ import java.net.URL;
 
 public class NetworkPerformance {
 
-    public static class MyMap extends Mapper<LongWritable, WritableWarcRecord, Text, WritableNetPerformMap> {
+    public static class MyMap extends Mapper<LongWritable, WritableWarcRecord, Text, Text> {
         private Text site = new Text();
-        private WritableNetPerformMap mapValue = new WritableNetPerformMap();
 
         protected void setup(Context cont) {
             System.err.println(">>>Processing>>> " + ((FileSplit) cont.getInputSplit()).getPath().toString());
@@ -30,19 +29,15 @@ public class NetworkPerformance {
             WarcRecord val = value.getRecord();
 
             String bytesString = val.getHeaderMetadataItem("Content-Length");
-            LongWritable numberOfBytes = new LongWritable(Integer.valueOf(bytesString));
 
-            Text warcDate = new Text(val.getHeaderMetadataItem("WARC-Date"));
-            LongWritable extractionTime = new LongWritable(0);
-
-            mapValue.setExtractionTime(extractionTime);
-            mapValue.setNumberOfBytes(numberOfBytes);
+            String warcDate = val.getHeaderMetadataItem("WARC-Date");
+            int extractionTime = 0;
 
             String url = val.getHeaderMetadataItem("WARC-Target-URI");
 
             try {
                 site.set(new URL(url).getHost());
-                cont.write(site, mapValue);
+                cont.write(site, new Text(bytesString + ":" + extractionTime));
 
             } catch (Exception e) {
             }
@@ -51,28 +46,29 @@ public class NetworkPerformance {
     }
 
 
-    public static class MyReduce extends Reducer<Text, WritableNetPerformMap, Text, WritableNetPerformReduce> {
+    public static class MyReduce extends Reducer<Text, Text, Text, Text> {
 
         private WritableNetPerformReduce result = new WritableNetPerformReduce();
 
-        public void reduce(Text key, Iterable<WritableNetPerformMap> values, Context cont)
+        public void reduce(Text key, Iterable<Text> values, Context cont)
                 throws IOException, InterruptedException {
 
             long sumNB = 0;
             long sumT = 0;
-            for (WritableNetPerformMap val : values) {
-                sumNB += val.getNumberOfBytes().get();
-                sumT += val.getExtractionTime().get();
+            for (Text val : values) {
+
+                String[] splitted = val.toString().split(":");
+                int numberOfBytes = Integer.valueOf(splitted[0]);
+                int extractionTime = Integer.valueOf(splitted[1]);
+
+                sumNB += numberOfBytes;
+                sumT += extractionTime;
             }
 
             double bandwidth = sumNB / (double) sumT;
 
-            result.setNumberOfBytes(new LongWritable(sumNB));
-            result.setNumberOfBytes(new LongWritable(sumT));
-            result.setBandwith(new DoubleWritable(bandwidth));
 
-
-            cont.write(key, result);
+            cont.write(key, new Text(sumNB + ":" + sumT));
         }
 
     }
@@ -83,14 +79,14 @@ public class NetworkPerformance {
         conf.setJarByClass(NetworkPerformance.class);
 
         conf.setOutputKeyClass(Text.class);
-        conf.setOutputValueClass(WritableNetPerformReduce.class);
+        conf.setOutputValueClass(Text.class);
 
         conf.setMapperClass(MyMap.class);
         conf.setCombinerClass(MyReduce.class);
         conf.setReducerClass(MyReduce.class);
 
         conf.setInputFormatClass(WarcFileInputFormat.class);
-        conf.setOutputFormatClass(WritableNetPerformMap.class); // TODO
+        conf.setOutputFormatClass(TextOutputFormat.class);
 
         FileInputFormat.setInputPaths(conf, new Path(args[0]));
         FileOutputFormat.setOutputPath(conf, new Path(args[1]));
