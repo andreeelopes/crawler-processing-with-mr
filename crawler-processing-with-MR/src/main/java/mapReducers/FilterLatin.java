@@ -1,7 +1,7 @@
-import javafx.beans.value.WritableBooleanValue;
+package mapReducers;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -11,12 +11,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import sun.reflect.annotation.ExceptionProxy;
 import utils.*;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.StringTokenizer;
 
 
 public class FilterLatin {
@@ -31,7 +29,7 @@ public class FilterLatin {
 
         private boolean isLatinAlphabet(String text) {
 
-                return text.matches("[\\s\\p{L}\\p{M}&&[^\\p{Alpha}]]+");
+                return true;
         }
 
         public void map(LongWritable key, WritableWarcRecord value, Context cont) throws IOException { //TODO is it better only map adding an attribute?
@@ -44,7 +42,7 @@ public class FilterLatin {
             try {
                 if (content != null && isLatinAlphabet(content)) {
                     word.set(new URL(url).getHost());
-                    cont.write(word, new Text(bytesString + " " + content));
+                    cont.write(word, new Text(bytesString + ":" + content));
                 }
             } catch (Exception e) {
                 //throw new IOException("DEBUG_MAP : " + url + val.getContentUTF8().substring(0, 100));
@@ -64,7 +62,7 @@ public class FilterLatin {
 
             for (Text val : values) {
                 if (val != null) {
-                    String[] splitedVal = val.toString().split(" ", 2);
+                    String[] splitedVal = val.toString().split(":", 2);
                     if (splitedVal[1].length() < 10)
                         content += (splitedVal[1].substring(0, (int) (splitedVal[1].length() * 0.10)));
                     else
@@ -73,31 +71,8 @@ public class FilterLatin {
                     content += (" ");
                 }
             }
-            cont.write(key, new Text(String.valueOf(bytes) + " " + content));
+            cont.write(key, new Text(String.valueOf(bytes) + ":" + content));
         }
 
     }
-
-
-    public static void main(String[] args) throws Exception {
-        Job conf = Job.getInstance(new Configuration(), "filter-latin plus site performance");
-        conf.setJarByClass(FilterLatin.class);
-
-        conf.setOutputKeyClass(Text.class);
-        conf.setOutputValueClass(Text.class);
-
-        conf.setMapperClass(MyMap.class);
-        conf.setCombinerClass(MyReduce.class); //TODO useless
-        conf.setReducerClass(MyReduce.class); //TODO useless
-
-        conf.setInputFormatClass(WarcFileInputFormat.class);
-        conf.setOutputFormatClass(TextOutputFormat.class); // TODO how to output the same type as input
-
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
-
-        conf.waitForCompletion(true); // submit and wait
-    }
-
-
 }
