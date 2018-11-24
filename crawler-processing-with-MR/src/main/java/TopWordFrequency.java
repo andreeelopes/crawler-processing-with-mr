@@ -14,7 +14,7 @@ import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
 import utils.WarcFileInputFormat;
 
-public class HeaviestSites extends Configured implements Tool{
+public class TopWordFrequency extends Configured implements Tool{
 
 
     public int run(String[] args) throws Exception {
@@ -67,6 +67,10 @@ public class HeaviestSites extends Configured implements Tool{
         controlledJob2.addDependingJob(controlledJob1);
         // add the job to the job control
         jobControl.addJob(controlledJob2);
+
+
+        //TODO add the missing mr jobs
+
         Thread jobControlThread = new Thread(jobControl);
         jobControlThread.start();
 
@@ -90,17 +94,20 @@ public class HeaviestSites extends Configured implements Tool{
 
     }
 
+
+    public static void main(String[] args) throws Exception {
+        int exitCode = ToolRunner.run(new TopWordFrequency(), args);
+        System.exit(exitCode);
+    }
+
+
+
     private void printJobControlStats(JobControl jobControl){
         System.out.println("Jobs in waiting state: " + jobControl.getWaitingJobList().size());
         System.out.println("Jobs in ready state: " + jobControl.getReadyJobsList().size());
         System.out.println("Jobs in running state: " + jobControl.getRunningJobList().size());
         System.out.println("Jobs in success state: " + jobControl.getSuccessfulJobList().size());
         System.out.println("Jobs in failed state: " + jobControl.getFailedJobList().size());
-    }
-
-    public static void main(String[] args) throws Exception {
-        int exitCode = ToolRunner.run(new HeaviestSites(), args);
-        System.exit(exitCode);
     }
 
 }

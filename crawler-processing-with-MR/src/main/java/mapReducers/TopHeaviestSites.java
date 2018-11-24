@@ -107,8 +107,9 @@ public class TopHeaviestSites {
             for (String val : newMap.values()) {
                 String[] splitedValue = val.split(":", 3);
                 String url = splitedValue[0];
+                String bytesStr =splitedValue[1];
                 String content = splitedValue[2];
-                context.write(new Text(url), new Text(content));
+                context.write(new Text(url), new Text(bytesStr + ":" + content));
             }
         }
     }

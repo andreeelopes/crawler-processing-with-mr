@@ -72,37 +72,16 @@ public class LatinSitesNetPerformance {
 
 
             for (Text val : values) {
-                String[] splitedVal = val.toString().split(":", 2);
+                if(val != null) {
+                    String[] splitedVal = val.toString().split(":", 2);
 
-                bytes += Integer.parseInt(splitedVal[0]);
-                content += (splitedVal[1]);
-                content += " ";
+                    bytes += Integer.parseInt(splitedVal[0]);
+                    content += (splitedVal[1]);
+                    content += " ";
+                }
             }
             cont.write(key, new Text(String.valueOf(bytes) + ":" + content));
         }
 
     }
-
-
-    public static void main(String[] args) throws Exception {
-        Job conf = Job.getInstance(new Configuration(), "filter-latin plus site performance");
-        conf.setJarByClass(LatinSitesNetPerformance.class);
-
-        conf.setOutputKeyClass(Text.class);
-        conf.setOutputValueClass(Text.class);
-
-        conf.setMapperClass(MyMap.class);
-        conf.setCombinerClass(MyReduce.class);
-        conf.setReducerClass(MyReduce.class);
-
-        conf.setInputFormatClass(WarcFileInputFormat.class);
-        conf.setOutputFormatClass(TextOutputFormat.class);
-
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
-
-        conf.waitForCompletion(true); // submit and wait
-    }
-
-
 }
