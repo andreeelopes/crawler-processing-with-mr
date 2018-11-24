@@ -1,6 +1,6 @@
 package utils;
 
-public class Unique {
+public class Unique implements Comparable<Unique> {
 
     private long key;
 
@@ -16,5 +16,8 @@ public class Unique {
         this.key = key;
     }
 
+    public int compareTo(Unique o) {
+        return new UniqueComparator().compare(this, o);
+    }
 }
 

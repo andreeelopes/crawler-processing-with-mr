@@ -1,4 +1,3 @@
-import mapReducers.FilterLatin;
 import mapReducers.TopHeaviestSites;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -25,14 +24,14 @@ public class HeaviestSites extends Configured implements Tool{
         JobControl jobControl = new JobControl("jobChain");
 
         Job job1 = Job.getInstance(new Configuration(), "Crawler Performance by site(latin alphabet only)");
-        job1.setJarByClass(FilterLatin.class);
+        job1.setJarByClass(LatinSitesNetPerformance.class);
 
         FileInputFormat.setInputPaths(job1, new Path(args[0]));
         FileOutputFormat.setOutputPath(job1, new Path(args[1] + "/temp"));
 
-        job1.setMapperClass(FilterLatin.MyMap.class);
-        job1.setReducerClass(FilterLatin.MyReduce.class);
-        job1.setCombinerClass(FilterLatin.MyReduce.class);
+        job1.setMapperClass(LatinSitesNetPerformance.MyMap.class);
+        job1.setReducerClass(LatinSitesNetPerformance.MyReduce.class);
+        job1.setCombinerClass(LatinSitesNetPerformance.MyReduce.class);
 
         job1.setInputFormatClass(WarcFileInputFormat.class);
 
@@ -52,6 +51,7 @@ public class HeaviestSites extends Configured implements Tool{
 
         job2.setMapperClass(TopHeaviestSites.MyMap.class);
         job2.setReducerClass(TopHeaviestSites.MyReduce.class);
+        job2.setCombinerClass(TopHeaviestSites.MyReduce.class);
 
         job2.setMapOutputKeyClass(NullWritable.class);
         job2.setMapOutputValueClass(Text.class);
@@ -72,11 +72,7 @@ public class HeaviestSites extends Configured implements Tool{
 
         while (!jobControl.allFinished()) {
             System.out.println("----Elaped Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
-            System.out.println("Jobs in waiting state: " + jobControl.getWaitingJobList().size());
-            System.out.println("Jobs in ready state: " + jobControl.getReadyJobsList().size());
-            System.out.println("Jobs in running state: " + jobControl.getRunningJobList().size());
-            System.out.println("Jobs in success state: " + jobControl.getSuccessfulJobList().size());
-            System.out.println("Jobs in failed state: " + jobControl.getFailedJobList().size());
+            printJobControlStats(jobControl);
             try {
                 Thread.sleep(5000);
             } catch (Exception e) {
@@ -85,17 +81,22 @@ public class HeaviestSites extends Configured implements Tool{
 
         }
         System.out.println("----Elaped Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
-        System.out.println("Jobs in waiting state: " + jobControl.getWaitingJobList().size());
-        System.out.println("Jobs in ready state: " + jobControl.getReadyJobsList().size());
-        System.out.println("Jobs in running state: " + jobControl.getRunningJobList().size());
-        System.out.println("Jobs in success state: " + jobControl.getSuccessfulJobList().size());
-        System.out.println("Jobs in failed state: " + jobControl.getFailedJobList().size());
+        printJobControlStats(jobControl);
         System.out.println("Hasta la vista, baby!");
+
+
         System.exit(0);
         return (job1.waitForCompletion(true) ? 0 : 1);
 
     }
 
+    private void printJobControlStats(JobControl jobControl){
+        System.out.println("Jobs in waiting state: " + jobControl.getWaitingJobList().size());
+        System.out.println("Jobs in ready state: " + jobControl.getReadyJobsList().size());
+        System.out.println("Jobs in running state: " + jobControl.getRunningJobList().size());
+        System.out.println("Jobs in success state: " + jobControl.getSuccessfulJobList().size());
+        System.out.println("Jobs in failed state: " + jobControl.getFailedJobList().size());
+    }
 
     public static void main(String[] args) throws Exception {
         int exitCode = ToolRunner.run(new HeaviestSites(), args);
