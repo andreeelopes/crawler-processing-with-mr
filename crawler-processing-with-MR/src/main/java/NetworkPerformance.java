@@ -1,3 +1,4 @@
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
@@ -12,6 +13,10 @@ import utils.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.channels.CancelledKeyException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 public class NetworkPerformance {
@@ -23,22 +28,17 @@ public class NetworkPerformance {
             System.err.println(">>>Processing>>> " + ((FileSplit) cont.getInputSplit()).getPath().toString());
         }
 
-        public void map(LongWritable key, WritableWarcRecord value, Context cont)
-                throws IOException, InterruptedException {
+        public void map(LongWritable key, WritableWarcRecord value, Context cont) {
 
             WarcRecord val = value.getRecord();
 
             String bytesString = val.getHeaderMetadataItem("Content-Length");
-
             String warcDate = val.getHeaderMetadataItem("WARC-Date");
-            int extractionTime = 0;
-
             String url = val.getHeaderMetadataItem("WARC-Target-URI");
 
             try {
                 site.set(new URL(url).getHost());
-                cont.write(site, new Text(bytesString + ":" + extractionTime));
-
+                cont.write(site, new Text(bytesString + ":" + warcDate));
             } catch (Exception e) {
             }
         }
@@ -48,27 +48,60 @@ public class NetworkPerformance {
 
     public static class MyReduce extends Reducer<Text, Text, Text, Text> {
 
-        private WritableNetPerformReduce result = new WritableNetPerformReduce();
+        private Text value = new Text();
+        private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
         public void reduce(Text key, Iterable<Text> values, Context cont)
                 throws IOException, InterruptedException {
 
+            TreeSet<Calendar> extractionDates = new TreeSet<Calendar>();
+
             long sumNB = 0;
-            long sumT = 0;
             for (Text val : values) {
+                String[] splittedVal = val.toString().split(":", 2);
+                long numberOfBytes = Long.valueOf(splittedVal[0]);
+                String warcDate = splittedVal[1];
 
-                String[] splitted = val.toString().split(":");
-                int numberOfBytes = Integer.valueOf(splitted[0]);
-                int extractionTime = Integer.valueOf(splitted[1]);
-
+                extractionDates.add(parseDate(warcDate));
                 sumNB += numberOfBytes;
-                sumT += extractionTime;
+            }
+//
+//            if (extractionDates.size() > 1) {
+//
+//                System.out.println();
+//                System.out.println(sumNB);
+//                System.out.println(extractionDates.first().getTime());
+//                System.out.println(extractionDates.last().getTime());
+//                System.out.println();
+//            }
+
+            long extractionTime = extractionDates.size() > 1 ?
+                    getIntervalInSecs(extractionDates.first(), extractionDates.last()) : -1;
+
+
+            String bandwidth = "NA";
+            String extractionTimeString = "NA";
+            if (extractionTime != -1) {
+                bandwidth = String.valueOf(sumNB / extractionTime); //Mb/s
+                extractionTimeString = String.valueOf(extractionTime);
             }
 
-            double bandwidth = sumNB / (double) sumT;
+            value.set(sumNB + ":" + extractionTimeString + ":" + bandwidth);
 
+            cont.write(key, value);
+        }
 
-            cont.write(key, new Text(sumNB + ":" + sumT));
+        private long getIntervalInSecs(Calendar first, Calendar last) {
+            return (last.getTimeInMillis() - first.getTimeInMillis()) / 1000;
+        }
+
+        private Calendar parseDate(String warcDate) {
+            try {
+                return DateUtils.toCalendar(formatter.parse(warcDate.replaceAll("Z$", "+0000")));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
     }
@@ -82,7 +115,6 @@ public class NetworkPerformance {
         conf.setOutputValueClass(Text.class);
 
         conf.setMapperClass(MyMap.class);
-        conf.setCombinerClass(MyReduce.class);
         conf.setReducerClass(MyReduce.class);
 
         conf.setInputFormatClass(WarcFileInputFormat.class);
