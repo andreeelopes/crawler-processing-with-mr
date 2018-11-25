@@ -19,18 +19,20 @@ public class TopPopularWords {
 
     private static final int TOP_SIZE = 10;
 
-    public static class MyMap extends Mapper<Text, IntWritable, NullWritable, Text> {
+    public static class MyMap extends Mapper<Text, Text, NullWritable, Text> {
 
         private static TreeMap<Unique, String> toRecordMap =
                 new TreeMap<Unique, String>(new UniqueComparator()); // (count, word:count)
+
+        private Text result = new Text();
 
         protected void setup(Context cont) {
             System.err.println(">>>Processing>>> " + ((FileSplit) cont.getInputSplit()).getPath().toString());
         }
 
-        public void map(Text key, IntWritable value, Context cont) { // (word,count)
+        public void map(Text key, Text value, Context cont) { // (word,count)
 
-            toRecordMap.put(new Unique(value.get()), key.toString() + ":" + value);
+            toRecordMap.put(new Unique(Integer.parseInt(value.toString())), key.toString() + ":" + value);
 
             //Limit map to 10 entries
             Iterator<Map.Entry<Unique, String>> iter = toRecordMap.entrySet().iterator();
@@ -47,7 +49,8 @@ public class TopPopularWords {
 
             // Output our ten records to the reducers with a null key
             for (String val : toRecordMap.values()) {
-                context.write(NullWritable.get(), new Text(val));
+                result.set(val);
+                context.write(NullWritable.get(), result);
             }
         }
 
@@ -58,6 +61,9 @@ public class TopPopularWords {
 
         private static TreeMap<Unique, String> toRecordMap =
                 new TreeMap<Unique, String>(new UniqueComparator()); //(null, word:count)
+
+        private Text wordText = new Text();
+        private IntWritable countWritable = new IntWritable();
 
         public void reduce(NullWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
@@ -94,7 +100,9 @@ public class TopPopularWords {
                 String word = splittedValue[0];
                 int count = Integer.parseInt(splittedValue[1]);
 
-                context.write(new Text(word), new IntWritable(count));
+                wordText.set(word);
+                countWritable.set(count);
+                context.write(wordText, countWritable);
             }
 
         }

@@ -70,57 +70,56 @@ public class TopWordFrequency extends Configured implements Tool {
         // add the job to the job control
         jobControl.addJob(controlledJob2);
 
-//        Job job3 = Job.getInstance(new Configuration(), "Word Count");
-//
-//        job3.setJarByClass(mapReducers.WordCount.class);
-//        FileInputFormat.setInputPaths(job3, new Path(args[1] + "/heaviest"));
-//        FileOutputFormat.setOutputPath(job3, new Path(args[1] + "/wordcount"));
-//
-//        job3.setMapperClass(mapReducers.WordCount.MyMap.class);
-//        job3.setReducerClass(mapReducers.WordCount.MyReduce.class);
-////        job3.setCombinerClass(mapReducers.WordCount.MyReduce.class);
-//
-//        job3.setMapOutputKeyClass(Text.class);
-//        job3.setMapOutputValueClass(IntWritable.class);
-//
-//        job3.setOutputKeyClass(Text.class);
-//        job3.setOutputValueClass(IntWritable.class);
-//        job3.setInputFormatClass(KeyValueTextInputFormat.class);
-//
-//        ControlledJob controlledJob3 = new ControlledJob(job3.getConfiguration());
-//        controlledJob3.setJob(job3);
-//
-//        // make job3 dependent on job2
-//        controlledJob3.addDependingJob(controlledJob2);
-//        // add the job to the job control
-//        jobControl.addJob(controlledJob3);
-//
-//
-//        Job job4 = Job.getInstance(new Configuration(), "Top 10 Popular Words");
-//
-//        job4.setJarByClass(mapReducers.TopPopularWords.class);
-//        FileInputFormat.setInputPaths(job4, new Path(args[1] + "/wordcount"));
-//        FileOutputFormat.setOutputPath(job4, new Path(args[1] + "/topPopWords"));
-//
-//        job4.setMapperClass(mapReducers.TopPopularWords.MyMap.class);
-//        job4.setReducerClass(mapReducers.TopPopularWords.MyReduce.class);
-////        job2.setCombinerClass(mapReducers.TopPopularWords.MyReduce.class);
-//
-//        job4.setMapOutputKeyClass(NullWritable.class);
-//        job4.setMapOutputValueClass(Text.class);
-//
-//        job4.setOutputKeyClass(Text.class);
-//        job4.setOutputValueClass(IntWritable.class);
-//        job4.setInputFormatClass(KeyValueTextInputFormat.class);
-//
-//        ControlledJob controlledJob4 = new ControlledJob(job4.getConfiguration());
-//        controlledJob4.setJob(job4);
-//
-//        // make job4 dependent on job3
-//        controlledJob4.addDependingJob(controlledJob3);
-//        // add the job to the job control
-//        jobControl.addJob(controlledJob4);
+        Job job3 = Job.getInstance(new Configuration(), "Word Count");
 
+        job3.setJarByClass(mapReducers.WordCount.class);
+        FileInputFormat.setInputPaths(job3, new Path(args[1] + "/heaviest"));
+        FileOutputFormat.setOutputPath(job3, new Path(args[1] + "/wordcount"));
+
+        job3.setMapperClass(mapReducers.WordCount.MyMap.class);
+        job3.setReducerClass(mapReducers.WordCount.MyReduce.class);
+//        job3.setCombinerClass(mapReducers.WordCount.MyReduce.class);
+
+        job3.setMapOutputKeyClass(Text.class);
+        job3.setMapOutputValueClass(IntWritable.class);
+
+        job3.setOutputKeyClass(Text.class);
+        job3.setOutputValueClass(IntWritable.class);
+        job3.setInputFormatClass(KeyValueTextInputFormat.class);
+
+        ControlledJob controlledJob3 = new ControlledJob(job3.getConfiguration());
+        controlledJob3.setJob(job3);
+
+        // make job3 dependent on job2
+        controlledJob3.addDependingJob(controlledJob2);
+        // add the job to the job control
+        jobControl.addJob(controlledJob3);
+
+
+        Job job4 = Job.getInstance(new Configuration(), "Top 10 Popular Words");
+
+        job4.setJarByClass(mapReducers.TopPopularWords.class);
+        FileInputFormat.setInputPaths(job4, new Path(args[1] + "/wordcount"));
+        FileOutputFormat.setOutputPath(job4, new Path(args[1] + "/topPopWords"));
+
+        job4.setMapperClass(mapReducers.TopPopularWords.MyMap.class);
+        job4.setReducerClass(mapReducers.TopPopularWords.MyReduce.class);
+//        job2.setCombinerClass(mapReducers.TopPopularWords.MyReduce.class);
+
+        job4.setMapOutputKeyClass(NullWritable.class);
+        job4.setMapOutputValueClass(Text.class);
+
+        job4.setOutputKeyClass(Text.class);
+        job4.setOutputValueClass(IntWritable.class);
+        job4.setInputFormatClass(KeyValueTextInputFormat.class);
+
+        ControlledJob controlledJob4 = new ControlledJob(job4.getConfiguration());
+        controlledJob4.setJob(job4);
+
+        // make job4 dependent on job3
+        controlledJob4.addDependingJob(controlledJob3);
+        // add the job to the job control
+        jobControl.addJob(controlledJob4);
 
 
         Thread jobControlThread = new Thread(jobControl);

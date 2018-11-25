@@ -26,7 +26,7 @@ public class WordCount {
             String[] splitValue = value.toString().split(":", 2); //(bytes, content)
             String content = splitValue[1];
 
-            
+
             StringTokenizer itr = new StringTokenizer(content);
             while (itr.hasMoreTokens()) {
                 word.set(itr.nextToken());
