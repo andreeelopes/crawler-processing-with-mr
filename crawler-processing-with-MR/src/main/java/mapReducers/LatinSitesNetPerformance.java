@@ -15,11 +15,16 @@ import utils.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.Normalizer;
 
 
 public class LatinSitesNetPerformance {
 
+
+
     public static class MyMap extends Mapper<LongWritable, WritableWarcRecord, Text, Text> {
+
+        private static final String IS_ENGLISH_REGEX = "^[ \\w \\d \\s \\. \\& \\+ \\- \\, \\! \\@ \\# \\$ \\% \\^ \\* \\( \\) \\; \\\\ \\/ \\| \\< \\> \\\" \\' \\? \\= \\: \\[ \\] ]*$";
 
         private Text site = new Text();
 
@@ -39,7 +44,7 @@ public class LatinSitesNetPerformance {
                     .replaceAll("\r", " ");
 
             try {
-                if (content != null && isLatinAlphabet(content)) {
+                if (isLatinAlphabet(content)) {
                     site.set(new URL(url).getHost());
 //                    if (content.length() > 5) //TODO remove this and substring
 //                        cont.write(site, new Text(bytesString + ":" + content.substring(0, 3)));
@@ -52,14 +57,10 @@ public class LatinSitesNetPerformance {
 
 
         private boolean isLatinAlphabet(String text) {
-//            String[] words = text.split(" ");
-//            for (String word : words) {
-//                if (!word.matches("[ \\w]+")) {
-//                    System.out.println(word);
-//                    return false;
-//                }
-//            }
-            return true;
+            if (text == null) {
+                return false;
+            }
+            return text.matches("[ \\w]+");
         }
 
 
