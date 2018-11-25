@@ -40,17 +40,17 @@ public class TopHeaviestSites {
                 return;
 
 
-            String[] splitedValue = value.toString().split(":", 2);
-            long bytes = Long.parseLong(splitedValue[0]);
+            String[] splittedValue = value.toString().split(":", 2);
+            long bytes = Long.parseLong(splittedValue[0]);
 
-            System.err.println("\n---DEBUG---\nbytes=" + bytes + "\ncontent=" + splitedValue[1]);
+            System.err.println("\n---DEBUG---\nbytes=" + bytes + "\ncontent=" + splittedValue[1]);
 
             toRecordMap.put(new Unique(bytes), key.toString() + ":" + value);// [bytes, (site, bytes, content)]
 
-            //Limit map to 10 entries
+            //Limit map to TOP_SIZE entries
             Iterator<Map.Entry<Unique, String>> iter = toRecordMap.entrySet().iterator();
 
-            while (toRecordMap.size() > 10) {
+            while (toRecordMap.size() > TOP_SIZE) {
                 iter.next();
                 iter.remove();
             }
@@ -79,11 +79,11 @@ public class TopHeaviestSites {
 
             for (Text val : values) {// val = (site, bytes, content)
                 System.err.print("\n---DEBUG-Reducer---\nval=" + val.toString());
-                String[] splitedValue = val.toString().split(":", 3);
+                String[] splittedValue = val.toString().split(":", 3);
 
-                String site = splitedValue[0];
-                long bytes = Long.parseLong(splitedValue[1]);
-                String content = splitedValue[2];
+                String site = splittedValue[0];
+                long bytes = Long.parseLong(splittedValue[1]);
+                String content = splittedValue[2];
                 System.err.print("\nsite=" + site);
                 System.err.print("\nbytes=" + bytes);
                 System.err.print("\ncontent=" + content);
@@ -105,10 +105,10 @@ public class TopHeaviestSites {
             newMap.putAll(toRecordMap);
 
             for (String val : newMap.values()) {
-                String[] splitedValue = val.split(":", 3);
-                String url = splitedValue[0];
-                String bytesStr =splitedValue[1];
-                String content = splitedValue[2];
+                String[] splittedValue = val.split(":", 3);
+                String url = splittedValue[0];
+                String bytesStr =splittedValue[1];
+                String content = splittedValue[2];
                 context.write(new Text(url), new Text(bytesStr + ":" + content));
             }
         }

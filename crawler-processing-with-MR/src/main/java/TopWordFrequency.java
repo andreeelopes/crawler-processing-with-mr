@@ -98,13 +98,13 @@ public class TopWordFrequency extends Configured implements Tool {
 //
 //        Job job4 = Job.getInstance(new Configuration(), "Top 10 Popular Words");
 //
-//        job4.setJarByClass(mapReducers.Top10PopularWords.class);
+//        job4.setJarByClass(mapReducers.TopPopularWords.class);
 //        FileInputFormat.setInputPaths(job4, new Path(args[1] + "/wordcount"));
-//        FileOutputFormat.setOutputPath(job4, new Path(args[1] + "/top10popWords"));
+//        FileOutputFormat.setOutputPath(job4, new Path(args[1] + "/topPopWords"));
 //
-//        job4.setMapperClass(mapReducers.Top10PopularWords.MyMap.class);
-//        job4.setReducerClass(mapReducers.Top10PopularWords.MyReduce.class);
-////        job2.setCombinerClass(mapReducers.Top10PopularWords.MyReduce.class);
+//        job4.setMapperClass(mapReducers.TopPopularWords.MyMap.class);
+//        job4.setReducerClass(mapReducers.TopPopularWords.MyReduce.class);
+////        job2.setCombinerClass(mapReducers.TopPopularWords.MyReduce.class);
 //
 //        job4.setMapOutputKeyClass(NullWritable.class);
 //        job4.setMapOutputValueClass(Text.class);
@@ -120,6 +120,7 @@ public class TopWordFrequency extends Configured implements Tool {
 //        controlledJob4.addDependingJob(controlledJob3);
 //        // add the job to the job control
 //        jobControl.addJob(controlledJob4);
+
 
 
         Thread jobControlThread = new Thread(jobControl);

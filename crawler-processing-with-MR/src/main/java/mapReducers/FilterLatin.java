@@ -62,12 +62,12 @@ public class FilterLatin {
 
             for (Text val : values) {
                 if (val != null) {
-                    String[] splitedVal = val.toString().split(":", 2);
-                    if (splitedVal[1].length() < 10)
-                        content += (splitedVal[1].substring(0, (int) (splitedVal[1].length() * 0.10)));
+                    String[] splittedVal = val.toString().split(":", 2);
+                    if (splittedVal[1].length() < 10)
+                        content += (splittedVal[1].substring(0, (int) (splittedVal[1].length() * 0.10)));
                     else
-                        content += (splitedVal[1].substring(0, 9));
-                    bytes += Integer.parseInt(splitedVal[0]);
+                        content += (splittedVal[1].substring(0, 9));
+                    bytes += Integer.parseInt(splittedVal[0]);
                     content += (" ");
                 }
             }

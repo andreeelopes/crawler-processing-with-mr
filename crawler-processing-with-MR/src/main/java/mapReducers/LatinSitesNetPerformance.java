@@ -75,10 +75,10 @@ public class LatinSitesNetPerformance {
 
             for (Text val : values) {
                 if(val != null) {
-                    String[] splitedVal = val.toString().split(":", 2);
+                    String[] splittedVal = val.toString().split(":", 2);
 
-                    bytes += Integer.parseInt(splitedVal[0]);
-                    content += (splitedVal[1]);
+                    bytes += Integer.parseInt(splittedVal[0]);
+                    content += (splittedVal[1]);
                     content += " ";
                 }
             }
