@@ -19,11 +19,17 @@ import utils.WarcFileInputFormat;
 public class TopWordFrequency extends Configured implements Tool {
 
 
+    private boolean debugMode = false;
+    private long beginTime;
+
     public int run(String[] args) throws Exception {
 
-        long beginTime = System.currentTimeMillis();
+        if(args.length == 3)
+            debugMode = Boolean.parseBoolean(args[2]);
 
-        JobControl jobControl = new JobControl("jobChain");
+        beginTime = System.currentTimeMillis();
+
+        JobControl jobControl = new JobControl("jobChain").;
 
         Job job1 = Job.getInstance(new Configuration(), "Crawler Performance by site(latin alphabet only)");
         job1.setJarByClass(LatinSitesNetPerformance.class);
@@ -126,7 +132,7 @@ public class TopWordFrequency extends Configured implements Tool {
         jobControlThread.start();
 
         while (!jobControl.allFinished()) {
-            System.out.println("----Elapsed Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
+
             printJobControlStats(jobControl);
             try {
                 Thread.sleep(5000);
@@ -135,9 +141,8 @@ public class TopWordFrequency extends Configured implements Tool {
             }
 
         }
-        System.out.println("----Elapsed Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
         printJobControlStats(jobControl);
-        System.out.println("Hasta la vista, baby!");
+        System.out.println((System.currentTimeMillis() - beginTime));
 
 
         System.exit(0);
@@ -147,17 +152,25 @@ public class TopWordFrequency extends Configured implements Tool {
 
 
     public static void main(String[] args) throws Exception {
+
+        if(args.length < 2){
+            System.out.print("Usage: <inputPath> <outputPath> [<debug>]");
+        }
+
         int exitCode = ToolRunner.run(new TopWordFrequency(), args);
         System.exit(exitCode);
     }
 
 
     private void printJobControlStats(JobControl jobControl) {
-        System.out.println("Jobs in waiting state: " + jobControl.getWaitingJobList().size());
-        System.out.println("Jobs in ready state: " + jobControl.getReadyJobsList().size());
-        System.out.println("Jobs in running state: " + jobControl.getRunningJobList().size());
-        System.out.println("Jobs in success state: " + jobControl.getSuccessfulJobList().size());
-        System.out.println("Jobs in failed state: " + jobControl.getFailedJobList().size());
+        if(debugMode) {
+            System.out.println("----Elapsed Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
+            System.out.println("Jobs in waiting state: " + jobControl.getWaitingJobList().size());
+            System.out.println("Jobs in ready state: " + jobControl.getReadyJobsList().size());
+            System.out.println("Jobs in running state: " + jobControl.getRunningJobList().size());
+            System.out.println("Jobs in success state: " + jobControl.getSuccessfulJobList().size());
+            System.out.println("Jobs in failed state: " + jobControl.getFailedJobList().size());
+        }
     }
 
 }
