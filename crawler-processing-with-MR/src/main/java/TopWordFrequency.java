@@ -127,7 +127,7 @@ public class TopWordFrequency extends Configured implements Tool {
         jobControlThread.start();
 
         while (!jobControl.allFinished()) {
-            System.out.println("----Elaped Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
+            System.out.println("----Elapsed Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
             printJobControlStats(jobControl);
             try {
                 Thread.sleep(5000);
@@ -136,7 +136,7 @@ public class TopWordFrequency extends Configured implements Tool {
             }
 
         }
-        System.out.println("----Elaped Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
+        System.out.println("----Elapsed Time = " + (System.currentTimeMillis() - beginTime) + "(ms)-----");
         printJobControlStats(jobControl);
         System.out.println("Hasta la vista, baby!");
 

@@ -34,7 +34,9 @@ public class LatinSitesNetPerformance {
 
             String bytesString = val.getHeaderMetadataItem("Content-Length");
             String url = val.getHeaderMetadataItem("WARC-Target-URI");
-            String content = val.getContentUTF8();
+            String content = val.getContentUTF8()
+                    .replaceAll("\n" ," ")
+                    .replaceAll("\r", " ");
 
             try {
                 if (content != null && isLatinAlphabet(content)) {

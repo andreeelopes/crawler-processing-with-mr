@@ -30,8 +30,8 @@ public class TopHeaviestSites {
         public void map(Text key, Text value, Context cont) {
             /*
                 ---DEBUG---
-                key = 01202.ru
-                value = 6915:Проститут
+                key = www.google.pt
+                value = 6915:sportingale
              */
             System.err.println("\n---DEBUG---\nkey = " + key.toString() + "\nvalue = " + value.toString() + "\n");
 
@@ -40,10 +40,15 @@ public class TopHeaviestSites {
                 return;
 
 
-            String[] splittedValue = value.toString().split(":", 2);
-            long bytes = Long.parseLong(splittedValue[0]);
-
-            System.err.println("\n---DEBUG---\nbytes=" + bytes + "\ncontent=" + splittedValue[1]);
+            String[] splitValue = value.toString().split(":", 2);
+            System.err.println("\n---DEBUG---\nbytes=" + splitValue[0] + "\ncontent=" + splitValue[1]);
+            long bytes = 0;
+//            try {
+                bytes = Long.parseLong(splitValue[0]);
+//            }
+//            catch (NumberFormatException e){
+//                return;
+//            }
 
             toRecordMap.put(new Unique(bytes), key.toString() + ":" + value);// [bytes, (site, bytes, content)]
 
@@ -79,11 +84,11 @@ public class TopHeaviestSites {
 
             for (Text val : values) {// val = (site, bytes, content)
                 System.err.print("\n---DEBUG-Reducer---\nval=" + val.toString());
-                String[] splittedValue = val.toString().split(":", 3);
+                String[] splitValue = val.toString().split(":", 3);
 
-                String site = splittedValue[0];
-                long bytes = Long.parseLong(splittedValue[1]);
-                String content = splittedValue[2];
+                String site = splitValue[0];
+                long bytes = Long.parseLong(splitValue[1]);
+                String content = splitValue[2];
                 System.err.print("\nsite=" + site);
                 System.err.print("\nbytes=" + bytes);
                 System.err.print("\ncontent=" + content);
@@ -105,10 +110,10 @@ public class TopHeaviestSites {
             newMap.putAll(toRecordMap);
 
             for (String val : newMap.values()) {
-                String[] splittedValue = val.split(":", 3);
-                String url = splittedValue[0];
-                String bytesStr =splittedValue[1];
-                String content = splittedValue[2];
+                String[] splitValue = val.split(":", 3);
+                String url = splitValue[0];
+                String bytesStr = splitValue[1];
+                String content = splitValue[2];
                 context.write(new Text(url), new Text(bytesStr + ":" + content));
             }
         }
