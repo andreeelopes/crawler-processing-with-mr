@@ -32,7 +32,9 @@ public class LatinSitesNetPerformance {
             String url = val.getHeaderMetadataItem("WARC-Target-URI");
             String content = val.getContentUTF8()
                     .replaceAll("\n", " ")
-                    .replaceAll("\r", " ");
+                    .replaceAll("\r", " ")
+                    .replaceAll("\\s+", " ")
+                    .replaceAll("[^a-zA-Z]+", " ");
 
             try {
                 if (isLatinAlphabet(content)) {
@@ -44,12 +46,19 @@ public class LatinSitesNetPerformance {
             }
         }
 
-
+        //TODO improve
         private boolean isLatinAlphabet(String text) {
-            if (text == null) {
+            if (text == null)
                 return false;
-            }
-            return !Utils.isCJK(text) && !Utils.isCyrillic(text);
+            text = text.replaceAll("\\p{Punct}", "")
+                    .trim()
+                    .replaceAll(" ", "")
+                    .replaceAll("[^\\p{L}\\p{Nd}]+", "")
+                    .replaceAll("[ºª]", "");
+
+            System.out.print("\nafter filter = " + text + "\n");
+
+            return text.matches("[A-Za-z]+");
         }
 
 
