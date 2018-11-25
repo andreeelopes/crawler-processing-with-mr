@@ -1,3 +1,5 @@
+package mapReducers;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -9,17 +11,18 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import utils.WarcFileInputFormat;
-import utils.WarcRecord;
-import utils.WritableFilterLatinMap;
-import utils.WritableWarcRecord;
+import utils.*;
 
 import java.io.IOException;
+import java.util.TreeMap;
 
 
 public class Top10PopularWords {
 
     public static class MyMap extends Mapper<LongWritable, WritableWarcRecord, LongWritable, WritableFilterLatinMap> {
+
+        private static TreeMap<Unique, WritableTop10LargestMap> toRecordMap =
+                new TreeMap<Unique, WritableTop10LargestMap>(new UniqueComparator());
 
         protected void setup(Context cont) {
             System.err.println(">>>Processing>>> " + ((FileSplit) cont.getInputSplit()).getPath().toString());
@@ -30,15 +33,7 @@ public class Top10PopularWords {
 
             WarcRecord val = value.getRecord();
 
-//            boolean isLatinAlphabet = val.getContentUTF8().matches("");// TODO
-//            IntWritable isLatinAlphabetInt = isLatinAlphabet ? new IntWritable(1) : new IntWritable(0);
-//
-//
-//            try {
-//                cont.write(key, new WritableFilterLatinMap(value, isLatinAlphabetInt));
-//
-//            } catch (Exception e) {
-//            }
+
         }
 
     }
@@ -57,7 +52,7 @@ public class Top10PopularWords {
 
     public static void main(String[] args) throws Exception {
 //        Job conf = Job.getInstance(new Configuration(), "filter-latin");
-//        conf.setJarByClass(FilterLatin.class);
+//        conf.setJarByClass(mapReducers.LatinSitesNetPerformance.class);
 //
 //        conf.setOutputKeyClass(Text.class);
 //        conf.setOutputValueClass(WritableWarcRecord.class);

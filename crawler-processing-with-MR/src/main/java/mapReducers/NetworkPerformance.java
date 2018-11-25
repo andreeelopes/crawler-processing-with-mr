@@ -1,3 +1,5 @@
+package mapReducers;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -13,7 +15,6 @@ import utils.*;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.channels.CancelledKeyException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -82,11 +83,11 @@ public class NetworkPerformance {
             String bandwidth = "NA";
             String extractionTimeString = "NA";
             if (extractionTime != -1) {
-                bandwidth = String.valueOf(sumNB / extractionTime); //Mb/s
+                bandwidth = String.valueOf(sumNB / extractionTime);
                 extractionTimeString = String.valueOf(extractionTime);
             }
 
-            value.set(sumNB + ":" + extractionTimeString + ":" + bandwidth);
+            value.set(sumNB + ":" + extractionTimeString + ":" + bandwidth); //TODO bandwith
 
             cont.write(key, value);
         }
@@ -105,26 +106,5 @@ public class NetworkPerformance {
         }
 
     }
-
-
-    public static void main(String[] args) throws Exception {
-        Job conf = Job.getInstance(new Configuration(), "network-performance");
-        conf.setJarByClass(NetworkPerformance.class);
-
-        conf.setOutputKeyClass(Text.class);
-        conf.setOutputValueClass(Text.class);
-
-        conf.setMapperClass(MyMap.class);
-        conf.setReducerClass(MyReduce.class);
-
-        conf.setInputFormatClass(WarcFileInputFormat.class);
-        conf.setOutputFormatClass(TextOutputFormat.class);
-
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
-
-        conf.waitForCompletion(true); // submit and wait
-    }
-
 
 }

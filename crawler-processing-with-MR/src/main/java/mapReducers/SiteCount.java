@@ -1,9 +1,9 @@
-/**
- * SiteCount.java - counts the number of pages each site has (the number
+package mapReducers; /**
+ * mapReducers.SiteCount.java - counts the number of pages each site has (the number
  * of times each hostname appears at document header)
  * usage example of edu.cmu.lemurproject.* InputFormat and RecordReader
  * Vitor Duarte, FCT/NOVA
- * based on public WordCount examples
+ * based on public mapReducers.WordCount examples
  */
 
 import java.io.IOException;
@@ -82,4 +82,6 @@ public class SiteCount {
 
         conf.waitForCompletion(true); // submit and wait
     }
+
+
 }
