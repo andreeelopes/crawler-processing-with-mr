@@ -1,4 +1,4 @@
-import mapReducers.NetworkPerformance;
+import mapreducers.NetworkPerformance;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;

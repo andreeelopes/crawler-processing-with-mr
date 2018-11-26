@@ -1,4 +1,4 @@
-package mapReducers; /**
+package mapreducers; /**
  * mapReducers.SiteCount.java - counts the number of pages each site has (the number
  * of times each hostname appears at document header)
  * usage example of edu.cmu.lemurproject.* InputFormat and RecordReader
