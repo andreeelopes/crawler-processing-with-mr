@@ -1,5 +1,5 @@
-import mapReducers.LatinSitesNetPerformance;
-import mapReducers.TopHeaviestSites;
+import mapreducers.LatinSitesNetPerformance;
+import mapreducers.TopHeaviestSites;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
@@ -14,7 +14,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
-import utils.WarcFileInputFormat;
+import utils.parsing.WarcFileInputFormat;
 
 public class TopWordFrequency extends Configured implements Tool {
 
@@ -29,7 +29,7 @@ public class TopWordFrequency extends Configured implements Tool {
 
         beginTime = System.currentTimeMillis();
 
-        JobControl jobControl = new JobControl("jobChain").;
+        JobControl jobControl = new JobControl("jobChain");
 
         Job job1 = Job.getInstance(new Configuration(), "Crawler Performance by site(latin alphabet only)");
         job1.setJarByClass(LatinSitesNetPerformance.class);
@@ -78,12 +78,12 @@ public class TopWordFrequency extends Configured implements Tool {
 
         Job job3 = Job.getInstance(new Configuration(), "Word Count");
 
-        job3.setJarByClass(mapReducers.WordCount.class);
+        job3.setJarByClass(mapreducers.WordCount.class);
         FileInputFormat.setInputPaths(job3, new Path(args[1] + "/heaviest"));
         FileOutputFormat.setOutputPath(job3, new Path(args[1] + "/wordcount"));
 
-        job3.setMapperClass(mapReducers.WordCount.MyMap.class);
-        job3.setReducerClass(mapReducers.WordCount.MyReduce.class);
+        job3.setMapperClass(mapreducers.WordCount.MyMap.class);
+        job3.setReducerClass(mapreducers.WordCount.MyReduce.class);
 //        job3.setCombinerClass(mapReducers.WordCount.MyReduce.class);
 
         job3.setMapOutputKeyClass(Text.class);
@@ -104,12 +104,12 @@ public class TopWordFrequency extends Configured implements Tool {
 
         Job job4 = Job.getInstance(new Configuration(), "Top 10 Popular Words");
 
-        job4.setJarByClass(mapReducers.TopPopularWords.class);
+        job4.setJarByClass(mapreducers.TopPopularWords.class);
         FileInputFormat.setInputPaths(job4, new Path(args[1] + "/wordcount"));
         FileOutputFormat.setOutputPath(job4, new Path(args[1] + "/topPopWords"));
 
-        job4.setMapperClass(mapReducers.TopPopularWords.MyMap.class);
-        job4.setReducerClass(mapReducers.TopPopularWords.MyReduce.class);
+        job4.setMapperClass(mapreducers.TopPopularWords.MyMap.class);
+        job4.setReducerClass(mapreducers.TopPopularWords.MyReduce.class);
 //        job2.setCombinerClass(mapReducers.TopPopularWords.MyReduce.class);
 
         job4.setMapOutputKeyClass(NullWritable.class);
