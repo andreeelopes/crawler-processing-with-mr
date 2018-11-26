@@ -1,4 +1,4 @@
-package utils;/*
+package utils.parsing;/*
 Lemur License Agreement
 
   Copyright (c) 2000-2011 The Lemur Project.  All rights reserved.

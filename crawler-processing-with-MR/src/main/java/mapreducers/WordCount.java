@@ -1,4 +1,4 @@
-package mapReducers;
+package mapreducers;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;

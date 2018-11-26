@@ -1,4 +1,4 @@
-package utils; /**
+package utils.parsing; /**
  * A Hadoop record reader for reading Warc Records
  *
  * (C) 2009 - Carnegie Mellon University

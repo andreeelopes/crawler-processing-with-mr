@@ -1,4 +1,4 @@
-package utils; /**
+package utils.parsing; /**
  * Hadoop FileInputFormat for reading WARC files
  *
  * (C) 2009 - Carnegie Mellon University
