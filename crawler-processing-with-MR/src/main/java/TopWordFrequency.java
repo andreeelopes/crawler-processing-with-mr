@@ -14,7 +14,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
-import utils.WarcFileInputFormat;
+import utils.parsing.WarcFileInputFormat;
 
 public class TopWordFrequency extends Configured implements Tool {
 

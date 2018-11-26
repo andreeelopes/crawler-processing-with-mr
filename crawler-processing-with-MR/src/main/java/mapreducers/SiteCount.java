@@ -14,9 +14,9 @@ import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.output.*;
 import org.apache.hadoop.mapreduce.lib.input.*;
-import utils.WarcFileInputFormat;
-import utils.WarcRecord;
-import utils.WritableWarcRecord;
+import utils.parsing.WarcFileInputFormat;
+import utils.parsing.WarcRecord;
+import utils.parsing.WritableWarcRecord;
 
 import java.net.URL;
 

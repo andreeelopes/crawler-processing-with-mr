@@ -1,4 +1,4 @@
-package utils; /**
+package utils.parsing; /**
  * An extension of the Writable object for Hadoop for a Warc Record
  * 
  * (C) 2009 - Carnegie Mellon University
