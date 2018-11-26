@@ -39,7 +39,7 @@ public class TopWordFrequency extends Configured implements Tool {
 
         job1.setMapperClass(LatinSitesNetPerformance.MyMap.class);
         job1.setReducerClass(LatinSitesNetPerformance.MyReduce.class);
-//        job1.setCombinerClass(mapReducers.LatinSitesNetPerformance.MyReduce.class);
+        job1.setCombinerClass(LatinSitesNetPerformance.MyReduce.class);
 
         job1.setInputFormatClass(WarcFileInputFormat.class);
 
@@ -84,7 +84,7 @@ public class TopWordFrequency extends Configured implements Tool {
 
         job3.setMapperClass(mapreducers.WordCount.MyMap.class);
         job3.setReducerClass(mapreducers.WordCount.MyReduce.class);
-//        job3.setCombinerClass(mapReducers.WordCount.MyReduce.class);
+        job3.setCombinerClass(mapreducers.WordCount.MyReduce.class);
 
         job3.setMapOutputKeyClass(Text.class);
         job3.setMapOutputValueClass(IntWritable.class);
