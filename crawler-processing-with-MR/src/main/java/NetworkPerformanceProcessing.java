@@ -10,7 +10,11 @@ import utils.parsing.WarcFileInputFormat;
 
 public class NetworkPerformanceProcessing {
 
+
     public static void main(String[] args) throws Exception {
+
+        long beginTime = System.currentTimeMillis();
+
         Job conf = Job.getInstance(new Configuration(), "network-performance");
         conf.setJarByClass(NetworkPerformance.class);
 
@@ -27,6 +31,9 @@ public class NetworkPerformanceProcessing {
         FileOutputFormat.setOutputPath(conf, new Path(args[1]));
 
         conf.waitForCompletion(true); // submit and wait
+
+        System.out.println((System.currentTimeMillis() - beginTime));
+
     }
 
 }

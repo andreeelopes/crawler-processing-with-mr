@@ -47,7 +47,6 @@ public class LatinSitesNetPerformance {
             }
         }
 
-        //TODO improve
         private boolean isLatinAlphabet(String text) {
             if (text == null)
                 return false;

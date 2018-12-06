@@ -28,27 +28,15 @@ public class TopHeaviestSites {
 
         //key =  0 value =  site bytes content
         public void map(Text key, Text value, Context cont) {
-            /*
-                ---DEBUG---
-                key = www.google.pt
-                value = 6915:sportingale
-             */
-            System.err.println("\n---DEBUG---\nkey = " + key.toString() + "\nvalue = " + value.toString() + "\n");
 
-
-            if(key.toString().length() == 0 || value.toString().length() == 0)
+            if (key.toString().length() == 0 || value.toString().length() == 0)
                 return;
 
 
             String[] splitValue = value.toString().split(":", 2);
-            System.err.println("\n---DEBUG---\nbytes=" + splitValue[0] + "\ncontent=" + splitValue[1]);
             long bytes = 0;
-//            try {
-                bytes = Long.parseLong(splitValue[0]);
-//            }
-//            catch (NumberFormatException e){
-//                return;
-//            }
+            bytes = Long.parseLong(splitValue[0]);
+
 
             toRecordMap.put(new Unique(bytes), key.toString() + ":" + value);// [bytes, (site, bytes, content)]
 
@@ -79,7 +67,6 @@ public class TopHeaviestSites {
 
         public void reduce(NullWritable key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
-
 
 
             for (Text val : values) {// val = (site, bytes, content)

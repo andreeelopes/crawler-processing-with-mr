@@ -62,15 +62,7 @@ public class NetworkPerformance {
                 extractionDates.add(parseDate(warcDate));
                 sumNB += numberOfBytes;
             }
-//
-//            if (extractionDates.size() > 1) {
-//
-//                System.out.println();
-//                System.out.println(sumNB);
-//                System.out.println(extractionDates.first().getTime());
-//                System.out.println(extractionDates.last().getTime());
-//                System.out.println();
-//            }
+
 
             long extractionTime = extractionDates.size() > 1 ?
                     getIntervalInSecs(extractionDates.first(), extractionDates.last()) : -1;
