@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import mapreducers.NetworkPerformance;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -9,7 +10,6 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import utils.parsing.WarcFileInputFormat;
 
 public class NetworkPerformanceProcessing {
-
 
     public static void main(String[] args) throws Exception {
 
@@ -27,13 +27,12 @@ public class NetworkPerformanceProcessing {
         conf.setInputFormatClass(WarcFileInputFormat.class);
         conf.setOutputFormatClass(TextOutputFormat.class);
 
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+        FileInputFormat.setInputPaths(conf, String.join(",", Arrays.copyOfRange(args, 0, args.length - 1)));
+        FileOutputFormat.setOutputPath(conf, new Path(args[args.length - 1]));
 
         conf.waitForCompletion(true); // submit and wait
 
+
         System.out.println((System.currentTimeMillis() - beginTime));
-
     }
-
 }
