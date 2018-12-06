@@ -14,8 +14,10 @@
 
 #Generate executable
 
-In the crawler-processing-with-MR:
+In the crawler-processing-with-MR execute:
+
 `mvn package` 
+
 This will generate a jar in the target folder
 
 #Deploy
