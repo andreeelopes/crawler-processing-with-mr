@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import mapreducers.NetworkPerformance;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -24,9 +25,7 @@ public class NetworkPerformanceProcessing {
         conf.setInputFormatClass(WarcFileInputFormat.class);
         conf.setOutputFormatClass(TextOutputFormat.class);
 
-        for (int i = 0; i < args.length - 1; i++) {
-            FileInputFormat.setInputPaths(conf, new Path(args[i]));
-        }
+        FileInputFormat.setInputPaths(conf, String.join(",", Arrays.copyOfRange(args, 0, args.length - 1)));
         FileOutputFormat.setOutputPath(conf, new Path(args[args.length - 1]));
 
         conf.waitForCompletion(true); // submit and wait
