@@ -2,14 +2,14 @@
 
 	.
 	├───crawler-processing-with-MR
-	|	├───doc							// report and more info about the project
+	|   ├───doc				// report and more info about the project
 	│   ├───src
 	│   │   └───main
 	│   │       ├───java
 	│   │       │   ├───mapreducers		// job logic
 	│   │       │   └───utils
-	│   │       └───scripts				// setup and test scripts
-	│   └───target						// jar location
+	│   │       └───scripts			// setup and test scripts
+	│   └───target				// jar location
 	└───README.md
 
 
